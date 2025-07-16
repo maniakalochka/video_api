@@ -22,22 +22,21 @@ class Video(models.Model):
         return str(self.name)
 
 
-class Quantity(models.TextChoices):
-    HD = "HD", "High Definition"
-    FHD = "FHD", "Full High Definition"
-    UHD = "UHD", "Ultra High Definition"
-
-
 class VideoFile(models.Model):
+    class Quality(models.TextChoices):
+        HD = "HD", "High Definition"
+        FHD = "FHD", "Full High Definition"
+        UHD = "UHD", "Ultra High Definition"
+
     video = models.ForeignKey(
         Video,
         on_delete=models.CASCADE,
         related_name="files"
     )
     file = models.FileField(upload_to="videos/", verbose_name="Видео файл")
-    quantity = models.CharField(
-        choices=Quantity.choices,
-        default=Quantity.HD,
+    quality = models.CharField(
+        choices=Quality.choices,
+        default=Quality.HD,
         verbose_name="Качество видео",
         max_length=3
     )
@@ -45,6 +44,7 @@ class VideoFile(models.Model):
     class Meta:
         verbose_name = "Видео файл"
         verbose_name_plural = "Видео файлы"
+        unique_together = ("video", "quality")
 
     def __str__(self) -> str:
         return f"{self.video.name} - {self.file.name}"
