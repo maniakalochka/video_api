@@ -20,3 +20,52 @@ class Video(models.Model):
 
     def __str__(self) -> str:
         return str(self.name)
+
+
+class Quantity(models.TextChoices):
+    HD = "HD", "High Definition"
+    FHD = "FHD", "Full High Definition"
+    UHD = "UHD", "Ultra High Definition"
+
+
+class VideoFile(models.Model):
+    video = models.ForeignKey(
+        Video,
+        on_delete=models.CASCADE,
+        related_name="files"
+    )
+    file = models.FileField(upload_to="videos/", verbose_name="Видео файл")
+    quantity = models.CharField(
+        choices=Quantity.choices,
+        default=Quantity.HD,
+        verbose_name="Качество видео",
+        max_length=3
+    )
+
+    class Meta:
+        verbose_name = "Видео файл"
+        verbose_name_plural = "Видео файлы"
+
+    def __str__(self) -> str:
+        return f"{self.video.name} - {self.file.name}"
+
+
+class Like(models.Model):
+    video = models.ForeignKey(
+        Video,
+        on_delete=models.CASCADE,
+        related_name="likes"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="likes"
+    )
+
+    class Meta:
+        verbose_name = "Лайк"
+        verbose_name_plural = "Лайки"
+        unique_together = ("video", "user")
+
+    def __str__(self) -> str:
+        return f"{self.user.username} liked {self.video.name}"  # type: ignore
