@@ -33,7 +33,7 @@ class VideoFile(models.Model):
         on_delete=models.CASCADE,
         related_name="files"
     )
-    file = models.FileField(upload_to="videos/", verbose_name="Видео файл")
+    file = models.FileField(blank=True, null=True, verbose_name="Видео файл")
     quality = models.CharField(
         choices=Quality.choices,
         default=Quality.HD,
