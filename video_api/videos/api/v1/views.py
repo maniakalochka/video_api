@@ -13,7 +13,7 @@ class VideoDetailView(generics.RetrieveAPIView):
 
 class VideoPagination(PageNumberPagination):
     page_size = 5
-    page_size_query_param = 'page_size'
+    page_size_query_param = "page_size"
 
 
 class VideoListView(generics.ListAPIView):

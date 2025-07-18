@@ -1,12 +1,10 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 
 class Video(models.Model):
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="videos"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="videos"
     )
     name = models.CharField(max_length=255, verbose_name="Название")
     is_published = models.BooleanField(default=False, verbose_name="Опубликовано")  # type: ignore
@@ -28,17 +26,13 @@ class VideoFile(models.Model):
         FHD = "FHD", "Full High Definition"
         UHD = "UHD", "Ultra High Definition"
 
-    video = models.ForeignKey(
-        Video,
-        on_delete=models.CASCADE,
-        related_name="files"
-    )
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="files")
     file = models.FileField(blank=True, null=True, verbose_name="Видео файл")
     quality = models.CharField(
         choices=Quality.choices,
         default=Quality.HD,
         verbose_name="Качество видео",
-        max_length=3
+        max_length=3,
     )
 
     class Meta:
@@ -51,15 +45,9 @@ class VideoFile(models.Model):
 
 
 class Like(models.Model):
-    video = models.ForeignKey(
-        Video,
-        on_delete=models.CASCADE,
-        related_name="likes"
-    )
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="likes")
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="likes"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="likes"
     )
 
     class Meta:

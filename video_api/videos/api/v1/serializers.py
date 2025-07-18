@@ -1,6 +1,7 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from ...models import Video, VideoFile, Like
+from rest_framework import serializers
+
+from ...models import Like, Video, VideoFile
 
 User = get_user_model()
 
