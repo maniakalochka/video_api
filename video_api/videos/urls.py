@@ -1,5 +1,4 @@
 from django.urls import path
-from django.contrib import admin
 
 from .api.v1.views import (
     VideoDetailView,
@@ -9,7 +8,6 @@ from .api.v1.views import (
 )
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("v1/videos/<int:pk>/", VideoDetailView.as_view(), name="video-detail"),
     path("v1/videos/", VideoListView.as_view(), name="video-list"),
     path('v1/videos/<int:id>/likes/', VideoLikesView.as_view(), name='video-likes'),
