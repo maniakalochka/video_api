@@ -41,7 +41,7 @@ class VideoFile(models.Model):
         unique_together = ("video", "quality")
 
     def __str__(self) -> str:
-        return f"{self.video.name} - {self.file.name}"
+        return f"{self.video.name} - {self.file.name if self.file else 'No file'}"
 
 
 class Like(models.Model):
