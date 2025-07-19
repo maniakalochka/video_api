@@ -49,8 +49,8 @@ class VideoLikesView(APIView):
     serializer_class = LikeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, video_id):
-        video = get_object_or_404(Video, id=video_id)
+    def post(self, request, id):
+        video = get_object_or_404(Video, id=id)
         like, created = Like.objects.get_or_create(video=video, user=request.user)
         if created:
             video.total_likes += 1
@@ -58,8 +58,8 @@ class VideoLikesView(APIView):
             return Response({"status": "liked"}, status=status.HTTP_201_CREATED)
         return Response({"detail": "Already liked"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, video_id):
-        video = get_object_or_404(Video, id=video_id)
+    def delete(self, request, id):
+        video = get_object_or_404(Video, id=id)
         like = Like.objects.filter(video=video, user=request.user).first()
         if like:
             like.delete()

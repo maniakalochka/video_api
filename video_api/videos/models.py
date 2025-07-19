@@ -39,6 +39,11 @@ class VideoFile(models.Model):
         verbose_name = "Видео файл"
         verbose_name_plural = "Видео файлы"
         unique_together = ("video", "quality")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["video", "quality"], name="unique_video_quality"
+            )
+        ]
 
     def __str__(self) -> str:
         return f"{self.video.name} - {self.file.name if self.file else 'No file'}"
@@ -53,7 +58,11 @@ class Like(models.Model):
     class Meta:
         verbose_name = "Лайк"
         verbose_name_plural = "Лайки"
-        unique_together = ("video", "user")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["video", "user"], name="unique_video_like"
+            )
+        ]
 
     def __str__(self) -> str:
         return f"{self.user.username} liked {self.video.name}"  # type: ignore
