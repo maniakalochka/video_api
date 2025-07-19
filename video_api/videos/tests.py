@@ -14,6 +14,7 @@ class VideoDetailViewTestCase(APITestCase):
             owner=self.user,
             name="Test Video",
             is_published=True,
+            total_likes=0,
         )
         self.detail_url = reverse("video-detail", kwargs={"pk": self.video.pk})
 
@@ -21,6 +22,7 @@ class VideoDetailViewTestCase(APITestCase):
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Test Video")  # type: ignore
+        self.assertEqual(response.data["total_likes"], 0)  # type: ignore
 
     def test_get_video_detail_not_found(self):
         url = reverse("video-detail", kwargs={"pk": 9999})
@@ -49,3 +51,8 @@ class VideoListViewTestCase(APITestCase):
         self.assertEqual(len(response.data["results"]), 2)  # type: ignore
         self.assertEqual(response.data["results"][1]["name"], "Test Video 1")  # type: ignore
         self.assertEqual(response.data["results"][0]["name"], "Test Video 2")  # type: ignore
+
+
+class VideoDetailLikesTestCase(APITestCase):
+    def setUp(self):
+        pass

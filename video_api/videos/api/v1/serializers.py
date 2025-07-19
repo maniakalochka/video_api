@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from ...models import Like, Video, VideoFile
+from videos.models import Like, Video, VideoFile
 
 User = get_user_model()
 
@@ -38,3 +38,9 @@ class VideoSerializer(serializers.ModelSerializer):
             "files",
             "likes",
         ]
+
+    def create(self, validated_data):
+        return Video.objects.create(
+            owner=self.context["request"].user,
+            **validated_data,
+        )
