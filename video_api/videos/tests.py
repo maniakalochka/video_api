@@ -3,7 +3,6 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from videos.models import Video
-from urllib import request
 
 User = get_user_model()
 
