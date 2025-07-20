@@ -69,10 +69,14 @@ class VideoLikesView(APIView):
 
 class PublishedVideoIDsView(APIView):
     serializer_class = VideoSerializer
-    pagination_class = VideoPagination
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+        elif not request.user.is_staff:
+            return Response({"detail": "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+
         ids = list(Video.objects.filter(is_published=True).values_list(
             'id',
             'owner__username',

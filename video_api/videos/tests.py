@@ -90,3 +90,38 @@ class VideoDetailLikesTestCase(APITestCase):
         self.assertEqual(response.data["status"], "liked")  # type: ignore
         self.video.refresh_from_db()
         self.assertEqual(self.video.total_likes, 1)  # type: ignore
+
+
+class TestListIDs(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(  # type: ignore
+            username="testuser",
+            password="pass1234",
+            is_staff=True
+        )
+        self.user2 = User.objects.create_user(  # type: ignore
+            username="testuser2",
+            password="pass1234",
+            is_staff=False
+        )
+        self.user3 = User.objects.create_user(  # type: ignore
+            username="testuser3",
+            password="pass1234",
+            is_staff=False
+        )
+        self.video = Video.objects.create(
+            owner=self.user2,
+            name="Test Video",
+            is_published=False,
+            total_likes=0,
+        )
+        self.detail_url = reverse("video-ids")
+
+    def test_get_video_ids_success_only_for_staff_users(self):
+        self.client.login(username="testuser", password="pass1234")
+        response = self.client.get(self.detail_url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+        self.client.login(username="testuser3", password="pass1234")
+        response = self.client.get(self.detail_url)
+        self.assertEqual(response.status_code, 403)
