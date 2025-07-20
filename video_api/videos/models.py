@@ -4,7 +4,7 @@ from django.db import models
 
 class Video(models.Model):
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="videos"
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="videos"
     )
     name = models.CharField(max_length=255, verbose_name="Название")
     is_published = models.BooleanField(default=False, verbose_name="Опубликовано")  # type: ignore
