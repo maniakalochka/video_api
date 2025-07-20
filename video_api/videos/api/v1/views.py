@@ -21,8 +21,7 @@ class VideoDetailView(generics.RetrieveAPIView):
             return Video.objects.filter(owner=user)
         elif user.is_authenticated:
             return Video.objects.filter(is_published=True) | Video.objects.filter(owner=user)
-        else:
-            return Video.objects.filter(is_published=True)
+        return Video.objects.filter(is_published=True)
 
 
 class VideoPagination(PageNumberPagination):
