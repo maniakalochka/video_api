@@ -3,13 +3,17 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from videos.models import Video
+from urllib import request
 
 User = get_user_model()
 
 
 class VideoDetailViewTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="pass1234")  # type: ignore
+        self.user = User.objects.create_user(  # type: ignore
+            username="testuser",
+            password="pass1234"
+        )
         self.video = Video.objects.create(
             owner=self.user,
             name="Test Video",
@@ -24,15 +28,24 @@ class VideoDetailViewTestCase(APITestCase):
         self.assertEqual(response.data["name"], "Test Video")  # type: ignore
         self.assertEqual(response.data["total_likes"], 0)  # type: ignore
 
+
     def test_get_video_detail_not_found(self):
         url = reverse("video-detail", kwargs={"pk": 9999})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
+    def test_get_video_detail_unauthenticated(self):
+        self.client.logout()
+        response = self.client.get(self.detail_url)
+        self.assertEqual(response.status_code, 200)
+
 
 class VideoListViewTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="pass1234")  # type: ignore
+        self.user = User.objects.create_user(  # type: ignore
+            username="testuser",
+            password="pass1234"
+        )
         self.video1 = Video.objects.create(
             owner=self.user,
             name="Test Video 1",
@@ -55,4 +68,26 @@ class VideoListViewTestCase(APITestCase):
 
 class VideoDetailLikesTestCase(APITestCase):
     def setUp(self):
-        pass
+        self.user = User.objects.create_user(username="testuser", password="pass1234")  # type: ignore
+        self.video = Video.objects.create(
+            owner=self.user,
+            name="Test Video",
+            is_published=True,
+            total_likes=0,
+        )
+        self.likes_url = reverse("video-likes", kwargs={"id": self.video.id})  # type: ignore
+
+    def test_cannot_like_video_because_not_authenticated(self):
+        self.likes_url = reverse("video-likes", kwargs={"id": self.video.id})  # type: ignore
+        response = self.client.post(self.likes_url)
+        print(response)
+        self.assertEqual(response.status_code, 403)
+
+
+    def test_like_video_success(self):
+        self.client.login(username="testuser", password="pass1234")
+        response = self.client.post(self.likes_url)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["status"], "liked")  # type: ignore
+        self.video.refresh_from_db()
+        self.assertEqual(self.video.total_likes, 1)  # type: ignore
