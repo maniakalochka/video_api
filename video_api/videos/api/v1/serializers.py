@@ -44,3 +44,26 @@ class VideoSerializer(serializers.ModelSerializer):
             owner=self.context["request"].user,
             **validated_data,
         )
+
+
+class UserLikesSerializer(serializers.ModelSerializer):
+    likes_sum = serializers.IntegerField()
+
+    class Meta:
+        model = User
+        fields = ["username", "likes_sum"]
+
+
+class ResigterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "email", "password"]
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(  # type: ignore
+            username=validated_data["username"],
+            email=validated_data["email"],
+            password=validated_data["password"],
+        )
+        return user
