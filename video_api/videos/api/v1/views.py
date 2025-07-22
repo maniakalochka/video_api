@@ -8,7 +8,6 @@ from videos.models import Video, Like
 from django.shortcuts import get_object_or_404
 
 from .serializers import LikeSerializer, VideoSerializer, UserLikesSerializer
-from api.v1.serializers import ResigterSerializer
 
 
 class VideoDetailView(generics.RetrieveAPIView):
@@ -90,12 +89,3 @@ class PublishedVideoIDsView(APIView):
 class TopUsersAPIView(generics.ListAPIView):
     serializer_class = UserLikesSerializer
     permission_classes = [permissions.AllowAny]
-
-
-class UserRegisterAPIView(APIView):
-    def post(self, request):
-        serializer = ResigterSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response({"username": user.username}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

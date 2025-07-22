@@ -1,5 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 from videos.models import Like, Video, VideoFile
 
@@ -52,18 +55,3 @@ class UserLikesSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["username", "likes_sum"]
-
-
-class ResigterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["username", "email", "password"]
-        extra_kwargs = {"password": {"write_only": True}}
-
-    def create(self, validated_data):
-        user = User.objects.create_user(  # type: ignore
-            username=validated_data["username"],
-            email=validated_data["email"],
-            password=validated_data["password"],
-        )
-        return user
