@@ -38,3 +38,28 @@ class RegisterSerializer(serializers.ModelSerializer):
             "refresh": str(token),
             "access": str(token.access_token),
         }
+
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        field = ("id", "username", "email", "password")
+
+    def validate(self, attrs):
+        user = User.objects.filter(username=attrs["username"]).first()
+        if user is None or not user.check_password(attrs["password"]):
+            raise serializers.ValidationError("Invalid username or password.")
+        return user
+
+    def to_representation(self, instance):
+        data = {
+            "id": instance.id,
+            "username": instance.username,
+            "email": instance.email,
+        }
+        token = RefreshToken.for_user(instance)
+        data['refresh'] = str(token)
+        data['access'] = str(token.access_token)
+        return data
