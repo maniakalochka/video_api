@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
 from videos.models import Video
 
@@ -85,15 +85,17 @@ class VideoDetailLikesTestCase(APITestCase):
         self.likes_url = reverse("video-likes", kwargs={"id": self.video.id})  # type: ignore
         response = self.client.post(self.likes_url)
         print(response)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
 
     def test_like_video_success(self):
-        self.client.login(
-            username="testuser",
-            password="pass1234",
-            email="valid@mail.ru"
-        )
+        client = APIClient()
+        response = self.client.post('/login/', {
+            'username': 'testuser',
+            'password': 'pass1234'
+        })
+        token = response.data['access']  # type: ignore
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         response = self.client.post(self.likes_url)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["status"], "liked")  # type: ignore
@@ -126,11 +128,18 @@ class TestListIDs(APITestCase):
         )
         self.detail_url = reverse("video-ids")
 
+
     def test_get_video_ids_success_only_for_staff_users(self):
-        self.client.login(username="testuser", password="pass1234")
-        response = self.client.get(self.detail_url)
+        client = APIClient()
+        response = client.post('/login/', {'username': 'testuser', 'password': 'pass1234'})
+        token = response.data['access']
+        client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
+        response = client.get(self.detail_url)
         self.assertEqual(response.status_code, 200)
-        self.client.logout()
-        self.client.login(username="testuser3", password="pass1234")
-        response = self.client.get(self.detail_url)
+
+        client = APIClient()
+        response = client.post('/login/', {'username': 'testuser3', 'password': 'pass1234'})
+        token = response.data['access']
+        client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
+        response = client.get(self.detail_url)
         self.assertEqual(response.status_code, 403)

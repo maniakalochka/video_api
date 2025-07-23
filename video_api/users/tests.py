@@ -48,3 +48,10 @@ class UserLoginTestCase(APITestCase):
         self.assertIn('access', response.data)  # type: ignore
         self.assertEqual(response.data['username'], self.user.username)  # type: ignore
         self.assertEqual(response.data['email'], self.user.email)  # type: ignore
+
+    def test_user_login_with_invalid_credentials(self):
+        response = self.client.post('/login/', {
+            'username': self.user.username,
+            'password': 'wrongPassword'
+        })
+        self.assertEqual(response.status_code, 400)
