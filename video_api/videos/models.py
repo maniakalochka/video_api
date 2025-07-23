@@ -38,7 +38,6 @@ class VideoFile(models.Model):
     class Meta:
         verbose_name = "Видео файл"
         verbose_name_plural = "Видео файлы"
-        unique_together = ("video", "quality")
         constraints = [
             models.UniqueConstraint(
                 fields=["video", "quality"], name="unique_video_quality"
