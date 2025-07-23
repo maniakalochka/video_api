@@ -89,13 +89,12 @@ class VideoDetailLikesTestCase(APITestCase):
 
 
     def test_like_video_success(self):
-        client = APIClient()
         response = self.client.post('/login/', {
             'username': 'testuser',
             'password': 'pass1234'
         })
         token = response.data['access']  # type: ignore
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token) # type: ignore
         response = self.client.post(self.likes_url)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["status"], "liked")  # type: ignore
@@ -132,14 +131,14 @@ class TestListIDs(APITestCase):
     def test_get_video_ids_success_only_for_staff_users(self):
         client = APIClient()
         response = client.post('/login/', {'username': 'testuser', 'password': 'pass1234'})
-        token = response.data['access']
+        token = response.data['access']  # type: ignore
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         response = client.get(self.detail_url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)  # type: ignore
 
         client = APIClient()
         response = client.post('/login/', {'username': 'testuser3', 'password': 'pass1234'})
-        token = response.data['access']
+        token = response.data['access']  # type: ignore
         client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         response = client.get(self.detail_url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)  # type: ignore
