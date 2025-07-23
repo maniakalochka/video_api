@@ -43,7 +43,8 @@ class VideoListViewTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(  # type: ignore
             username="testuser",
-            password="pass1234"
+            password="pass1234",
+            is_staff=True
         )
         self.video1 = Video.objects.create(
             owner=self.user,
@@ -67,7 +68,11 @@ class VideoListViewTestCase(APITestCase):
 
 class VideoDetailLikesTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="pass1234")  # type: ignore
+        self.user = User.objects.create_user(  # type: ignore
+            username="testuser",
+            password="pass1234",
+            email="valid@mail.ru"
+        )
         self.video = Video.objects.create(
             owner=self.user,
             name="Test Video",
@@ -84,7 +89,11 @@ class VideoDetailLikesTestCase(APITestCase):
 
 
     def test_like_video_success(self):
-        self.client.login(username="testuser", password="pass1234")
+        self.client.login(
+            username="testuser",
+            password="pass1234",
+            email="valid@mail.ru"
+        )
         response = self.client.post(self.likes_url)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["status"], "liked")  # type: ignore
