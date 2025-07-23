@@ -11,7 +11,6 @@ from .serializers import LikeSerializer, VideoSerializer, UserLikesSerializer
 from videos.services.statistics import get_video_statistics_by_subquery, get_video_statistics_by_group_by
 
 
-
 class VideoDetailView(generics.RetrieveAPIView):
     serializer_class = VideoSerializer
     permission_classes = [permissions.AllowAny]
@@ -53,6 +52,7 @@ class VideoLikesView(APIView):
     def post(self, request, id):
         video = get_object_or_404(Video, id=id)
         like, created = Like.objects.get_or_create(video=video, user=request.user)
+
         if created:
             video.total_likes += 1
             video.save()
@@ -62,6 +62,7 @@ class VideoLikesView(APIView):
     def delete(self, request, id):
         video = get_object_or_404(Video, id=id)
         like = Like.objects.filter(video=video, user=request.user).first()
+
         if like:
             like.delete()
             video.total_likes = max(0, video.total_likes - 1)

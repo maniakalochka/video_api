@@ -17,7 +17,7 @@ def generate_test_data(user_count=10_000, video_count=100_000, max_likes_per_vid
             username=f"user_{i}",
             email=f"user_{i}@example.com",
             is_staff=random.choice([True, False]),
-            password=hashed_pw  # ⏩ быстрое сохранение хешированного пароля
+            password=hashed_pw
         )
         users.append(user)
 
@@ -65,14 +65,14 @@ def generate_test_data(user_count=10_000, video_count=100_000, max_likes_per_vid
         for user in liked_users:
             likes.append(Like(video=video, user=user))
 
-        video_likes_map[video.id] = len(liked_users)
+        video_likes_map[video.id] = len(liked_users)  # type: ignore
 
     Like.objects.bulk_create(likes, batch_size=1000)
 
     print("Обновление количества лайков у видео...")
 
     for video in created_videos:
-        video.total_likes = video_likes_map.get(video.id, 0)
+        video.total_likes = video_likes_map.get(video.id, 0)  # type: ignore
 
     Video.objects.bulk_update(created_videos, ["total_likes"], batch_size=1000)
 

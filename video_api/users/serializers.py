@@ -39,6 +39,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "access": str(token.access_token),
         }
 
+
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
@@ -59,6 +60,7 @@ class UserLoginSerializer(serializers.Serializer):
             "username": instance.username,
             "email": instance.email,
         }
+
         token = RefreshToken.for_user(instance)
         data['refresh'] = str(token)
         data['access'] = str(token.access_token)
