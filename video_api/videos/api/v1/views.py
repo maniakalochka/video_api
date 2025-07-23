@@ -95,10 +95,11 @@ class TopUsersAPIView(generics.ListAPIView):
 
 class VideoStatisticsSubqueryView(APIView):
     permission_classes = [permissions.IsAdminUser]
+
     def get(self, request):
         queryset = get_video_statistics_by_subquery()
         data = [
-            {"username": user.username, "likes_sum": user.likes_sum or 0}
+            {"username": user.username, "likes_sum": user.likes_sum or 0}  # type: ignore
             for user in queryset
         ]
         return Response(data)
