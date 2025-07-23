@@ -5,6 +5,8 @@ from .api.v1.views import (
     VideoLikesView,
     PublishedVideoIDsView,
     VideoListView,
+    VideoStatisticsSubqueryView,
+    VideoStatisticsGroupByView
 )
 
 urlpatterns = [
@@ -12,6 +14,6 @@ urlpatterns = [
     path("v1/videos/", VideoListView.as_view(), name="video-list"),
     path('v1/videos/<int:id>/likes/', VideoLikesView.as_view(), name='video-likes'),
     path('v1/videos/ids/', PublishedVideoIDsView.as_view(), name='video-ids'),
-    # path('v1/videos/statistics-subquery/', VideoStatisticsSubqueryView.as_view(), name='video-statistics-subquery'),
-    # path('v1/videos/statistics-group-by/', VideoStatisticsGroupByView.as_view(), name='video-statistics-group-by'),
+    path('v1/videos/statistics-subquery/', VideoStatisticsSubqueryView.as_view(), name='video-statistics-subquery'),
+    path('v1/videos/statistics-group-by/', VideoStatisticsGroupByView.as_view(), name='video-statistics-group-by'),
 ]

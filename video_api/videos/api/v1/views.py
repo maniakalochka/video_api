@@ -8,6 +8,8 @@ from videos.models import Video, Like
 from django.shortcuts import get_object_or_404
 
 from .serializers import LikeSerializer, VideoSerializer, UserLikesSerializer
+from videos.services.statistics import get_video_statistics_by_subquery, get_video_statistics_by_group_by
+
 
 
 class VideoDetailView(generics.RetrieveAPIView):
@@ -89,3 +91,26 @@ class PublishedVideoIDsView(APIView):
 class TopUsersAPIView(generics.ListAPIView):
     serializer_class = UserLikesSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class VideoStatisticsSubqueryView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+    def get(self, request):
+        queryset = get_video_statistics_by_subquery()
+        data = [
+            {"username": user.username, "likes_sum": user.likes_sum or 0}
+            for user in queryset
+        ]
+        return Response(data)
+
+
+class VideoStatisticsGroupByView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        queryset = get_video_statistics_by_group_by()
+        data = [
+            {"username": user["owner__username"], "likes_sum": user["likes_sum"] or 0}
+            for user in queryset
+        ]
+        return Response(data)
