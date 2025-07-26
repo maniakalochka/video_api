@@ -1,5 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.middleware.jwt_auth.JWTAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'video_api.urls'
@@ -69,11 +71,11 @@ WSGI_APPLICATION = 'video_api.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "video_api",
-        "USER": "postgres",
-        "PASSWORD": "password",
-        "HOST": "postgres_db",
-        "PORT": "5432",
+                "NAME": os.getenv("POSTGRES_DB", "postgres"),
+                "USER": os.getenv("POSTGRES_USER", "postgres"),
+                "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
+                "HOST": os.getenv("DB_HOST", "localhost"),
+                "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
 

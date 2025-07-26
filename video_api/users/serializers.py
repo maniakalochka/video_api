@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 
@@ -46,11 +47,11 @@ class UserLoginSerializer(serializers.Serializer):
 
     class Meta:
         model = User
-        field = ("id", "username", "email", "password")
+        fields= ("id", "username", "email", "password")
 
     def validate(self, attrs):
-        user = User.objects.filter(username=attrs["username"]).first()
-        if user is None or not user.check_password(attrs["password"]):
+        user = authenticate(username=attrs["username"], password=attrs["password"])
+        if not user:
             raise serializers.ValidationError("Invalid username or password.")
         return user
 
