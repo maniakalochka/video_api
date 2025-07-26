@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'videos',
     'users',
+    # 'management',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +72,7 @@ DATABASES = {
         "NAME": "video_api",
         "USER": "postgres",
         "PASSWORD": "password",
-        "HOST": "localhost",
+        "HOST": "postgres_db",
         "PORT": "5432",
     }
 }

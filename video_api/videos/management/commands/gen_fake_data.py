@@ -2,7 +2,7 @@ import random
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from videos.models import Video, VideoFile, Like
+from ...models import Video, VideoFile, Like
 
 User = get_user_model()
 
